@@ -73,7 +73,16 @@ class MainWindow(wx.Frame):
         self.pub_rmotor = rospy.Publisher('rmotor_cmd', Int16)
         rospy.init_node('kinex_arduino_connector')
         rospy.Subscriber("arduino_debug", String, self.arduino_debug_callback)    
+        
+        self.joy = wx.Joystick()
+        self.joy.SetCapture(self)
+        self.Bind(wx.EVT_JOY_BUTTON_DOWN, self.onJoyBtn)
+        self.Bind(wx.EVT_JOY_BUTTON_UP, self.onJoyBtn)
         rospy.loginfo ( "done initializing") 
+        
+    def onJoyBtn(self, event):
+        rospy.loginfo( "Joystick button pressed" )
+        
         
     ######################################################################
     def OnSliderLeft(self, evt):
