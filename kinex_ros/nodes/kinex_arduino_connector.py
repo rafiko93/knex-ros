@@ -55,9 +55,16 @@ class MainWindow(wx.Frame):
         self.row3_sizer.Add(self.lblSliderR)
         self.row3_sizer.Add(self.sldRight)
         
+        self.btnZero = wx.Button(panel, -1, "Zero", (25,50))
+        self.btnZero.Bind(wx.EVT_BUTTON, self.OnButtonZero)
+        
+        self.row4_sizer = wx.BoxSizer( wx.HORIZONTAL )
+        self.row4_sizer.Add( self.btnZero )
+        
         self.top_sizer.Add(self.row1_sizer)
         self.top_sizer.Add(self.row2_sizer)
         self.top_sizer.Add(self.row3_sizer)
+        self.top_sizer.Add(self.row4_sizer)
         
         panel.SetSizer(self.top_sizer)
                 
@@ -80,6 +87,14 @@ class MainWindow(wx.Frame):
         rospy.loginfo ( "Right slider value %d" % self.sldRight.GetValue() )
         wx.CallAfter(self.pub_rmotor.publish, self.sldRight.GetValue())
         
+    ######################################################################
+    def OnButtonZero(self, evt):
+    ######################################################################
+        rospy.loginfo("Button Zero")
+        wx.CallAfter( self.sldLeft.SetValue, 0)
+        wx.CallAfter( self.sldRight.SetValue, 0)
+        self.pub_rmotor.publish(0)
+        self.pub_lmotor.publish(0)
         
         
 
