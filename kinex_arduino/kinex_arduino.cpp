@@ -11,7 +11,7 @@
 
 #define P_RFWD 6
 #define P_RREV 7
-#define P_RENA 8
+#define P_RENA 9
 
 #define LOOP_DLY 5  // in msec
 
@@ -28,49 +28,81 @@ int ticks_since_beat = 0;
 //The setup function is called once at startup of the sketch
 
 void lfwd(int speed=255) {
+	sprintf(debug_str, "lfwd %d", speed);
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
 	digitalWrite( P_LFWD, HIGH );
 	digitalWrite( P_LREV, LOW );
 	analogWrite( P_LENA, constrain( 255-speed, 0, 255 ) );
 }
 
 void lrev(int speed=255) {
+	sprintf(debug_str, "lrev %d", speed);
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
 	digitalWrite( P_LFWD, LOW );
 	digitalWrite( P_LREV, HIGH );
 	analogWrite( P_LENA, constrain( 255-speed, 0, 255 ) );
 }
 
 void lcoast() {
+	sprintf(debug_str, "lcoast");
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
 	digitalWrite( P_LFWD, LOW );
 	digitalWrite( P_LREV, LOW );
 	digitalWrite( P_LENA, LOW );
 }
 
 void lbrake() {
+	sprintf(debug_str, "lbrake");
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
 	digitalWrite( P_LFWD, HIGH );
 	digitalWrite( P_LREV, HIGH );
 	digitalWrite( P_LENA, LOW);
 }
 
 void rfwd( int speed=255) {
+	sprintf(debug_str, "rfwd %d", speed);
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
 	digitalWrite( P_RFWD, HIGH );
 	digitalWrite( P_RREV, LOW );
-	analogWrite( P_LENA, constrain( 255-speed, 0, 255 ) );
+	analogWrite( P_RENA, constrain( 255-speed, 0, 255 ) );
 }
 
 void rrev(int speed=255) {
+	sprintf(debug_str, "rrev %d", speed);
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
 	digitalWrite( P_RFWD, LOW );
 	digitalWrite( P_RREV, HIGH );
-	analogWrite( P_LENA, constrain( 255-speed, 0, 255 ) );
+	analogWrite( P_RENA, constrain( 255-speed, 0, 255 ) );
 }
 
 
 void rcoast() {
+	sprintf(debug_str, "rcoast");
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
 	digitalWrite( P_RFWD, LOW );
 	digitalWrite( P_RREV, LOW );
 	digitalWrite( P_RENA, LOW );
 }
 
 void rbrake() {
+	sprintf(debug_str, "rbrake");
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
 	digitalWrite( P_RFWD, HIGH );
 	digitalWrite( P_RREV, HIGH );
 	digitalWrite( P_RENA, LOW);
@@ -88,7 +120,7 @@ void RMotorCallBack( const std_msgs::Int16& motor_msg) {
     } else if (motor_msg.data == 0) {
     	rcoast();
     } else if (motor_msg.data < 0) {
-    	rrev(motor_msg.data);
+    	rrev(abs(motor_msg.data));
     } else {
     	rfwd(motor_msg.data);
     }
@@ -97,16 +129,13 @@ void RMotorCallBack( const std_msgs::Int16& motor_msg) {
 //////////////////////////////////////////////////////////////////////
 void LMotorCallBack( const std_msgs::Int16& motor_msg) {
 //////////////////////////////////////////////////////////////////////
-	sprintf(debug_str, "LMotorCallback %d", motor_msg.data);
-	msg_debug.data = debug_str;
-	debug_pub.publish( &msg_debug );
 
     if (motor_msg.data > 255 || motor_msg.data < -255) {
     	lbrake();
     } else if (motor_msg.data == 0) {
     	lcoast();
     } else if (motor_msg.data < 0) {
-    	lrev(motor_msg.data);
+    	lrev(abs(motor_msg.data));
     } else {
     	lfwd(motor_msg.data);
     }
