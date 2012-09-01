@@ -1,0 +1,5 @@
+<launch>
+
+  <node pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0" name="serial_node" respawn="true"/>
+  <node pkg="kinex_ros" type="kinex_arduino_connector.py" name="kinex_arduino_connector" output="screen"/>
+</launch>

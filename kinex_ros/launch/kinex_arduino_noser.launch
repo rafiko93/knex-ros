@@ -1,0 +1,4 @@
+<launch>
+
+  <node pkg="kinex_ros" type="kinex_arduino_connector.py" name="kinex_arduino_connector" output="screen"/>
+</launch>
