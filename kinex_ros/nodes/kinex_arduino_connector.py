@@ -74,15 +74,56 @@ class MainWindow(wx.Frame):
         rospy.init_node('kinex_arduino_connector')
         rospy.Subscriber("arduino_debug", String, self.arduino_debug_callback)    
         
-        self.joy = wx.Joystick()
+        self.joy = wx.Joystick(1)
         self.joy.SetCapture(self)
-        self.Bind(wx.EVT_JOY_BUTTON_DOWN, self.onJoyBtn)
-        self.Bind(wx.EVT_JOY_BUTTON_UP, self.onJoyBtn)
+        self.Bind(wx.EVT_JOY_BUTTON_DOWN, self.OnJoyBtn)
+        self.Bind(wx.EVT_JOY_BUTTON_UP, self.OnJoyBtn)
+        self.Bind(wx.EVT_JOY_MOVE, self.OnJoyMove)
         rospy.loginfo ( "done initializing") 
         
-    def onJoyBtn(self, event):
+    ######################################################################
+    def OnJoyBtn(self, event):
+    ######################################################################
         rospy.loginfo( "Joystick button pressed" )
         
+    ######################################################################
+    def OnJoyMove(self, event):
+    ######################################################################
+        pos = self.joy.GetPosition()
+        max = self.joy.GetXMax()
+        rospy.loginfo( "Joystick move x=%d, y=%d max=%d" % (pos[0], pos[1], max) )
+        self.diff_drive(float(pos[0]) / max, float(pos[1]) / max)
+        
+        
+    ######################################################################
+    def diff_drive(self, x, y):
+    ######################################################################
+        rospy.loginfo("diffdrive x=%0.3f, y=%0.3f" % (x,y))
+        threshold = 0.1
+        if ( abs(x) < threshold and abs(y) < threshold ):
+            l = 0
+            r = 0
+            
+        else:
+            if( x >= 0):
+                rmin = x - 1  # -1 to 0
+                rmax = 1
+                lmin = -1
+                lmax = 1 - x  # 1 to 0
+            else:
+                rmin = -1
+                rmax = 1 + x  # 1 to 0
+                lmin = -1 - x # -1 to 0
+                lmax = 1
+        
+            l = lmin + ( lmax - lmin ) / 2 + y * (lmax - lmin) / 2 * -1
+            r = rmin + ( rmax - rmin ) / 2 + y * (rmax - rmin) / 2 * -1
+            rospy.loginfo( " l:%0.2f(%0.2f:%0.2f) r:%0.2f(%0.2f:%0.2f)" % (l,lmin,lmax,r,rmin,rmax))
+        
+        wx.CallAfter( self.sldLeft.SetValue, l * 255)
+        wx.CallAfter( self.sldRight.SetValue, r * 255)
+        self.pub_lmotor.publish( l * 255 )
+        self.pub_rmotor.publish( r * 255)
         
     ######################################################################
     def OnSliderLeft(self, evt):
