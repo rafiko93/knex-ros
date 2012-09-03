@@ -4,14 +4,26 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Int16.h>
 #include <Time.h>
+#include <Servo.h>
 
-#define P_LFWD 3
+#define P_LFWD 2
 #define P_LREV 4
-#define P_LENA 5
+#define P_LENA 3
 
 #define P_RFWD 6
 #define P_RREV 7
-#define P_RENA 9
+#define P_RENA 5
+
+#define SERVO1 10
+#define SERVO2 11
+#define SERVO3 12
+#define SERVO4 13
+#define SERVO5 14
+Servo servo1;
+Servo servo2;
+Servo servo3;
+Servo servo4;
+Servo servo5;
 
 #define LOOP_DLY 5  // in msec
 
@@ -23,6 +35,7 @@ ros::Publisher debug_pub("arduino_debug", &msg_debug);
 char debug_str[80] = "blank";
 int tick_no = 0;
 int ticks_since_beat = 0;
+
 
 
 //The setup function is called once at startup of the sketch
@@ -107,6 +120,10 @@ void rbrake() {
 	digitalWrite( P_RREV, HIGH );
 	digitalWrite( P_RENA, LOW);
 }
+//////////////////////////////////////////////////////////////////////
+// callbacks
+//////////////////////////////////////////////////////////////////////
+
 
 //////////////////////////////////////////////////////////////////////
 void RMotorCallBack( const std_msgs::Int16& motor_msg) {
@@ -140,13 +157,59 @@ void LMotorCallBack( const std_msgs::Int16& motor_msg) {
     	lfwd(motor_msg.data);
     }
 }
+////////////////////////////////////////////////////////////////////////
+void Servo1CallBack( const std_msgs::Int16& servo_msg) {
+////////////////////////////////////////////////////////////////////////
+	sprintf(debug_str, "servo1 %d", servo_msg.data);
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
 
+	servo1.write( constrain( servo_msg.data, 0, 179) );
+}
+////////////////////////////////////////////////////////////////////////
+void Servo2CallBack( const std_msgs::Int16& servo_msg) {
+////////////////////////////////////////////////////////////////////////
+	sprintf(debug_str, "servo2 %d", servo_msg.data);
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
+	servo2.write( constrain( servo_msg.data, 0, 179) );
+}
 //////////////////////////////////////////////////////////////////////
-// callbacks
+void Servo3CallBack( const std_msgs::Int16& servo_msg) {
 //////////////////////////////////////////////////////////////////////
+	sprintf(debug_str, "servo3 %d", servo_msg.data);
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
+	servo3.write( constrain( servo_msg.data, 0, 179) );
+}
+//////////////////////////////////////////////////////////////////////
+void Servo4CallBack( const std_msgs::Int16& servo_msg) {
+//////////////////////////////////////////////////////////////////////
+	sprintf(debug_str, "servo4 %d", servo_msg.data);
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
+	servo4.write( constrain( servo_msg.data, 0, 179) );
+}
+//////////////////////////////////////////////////////////////////////
+void Servo5CallBack( const std_msgs::Int16& servo_msg) {
+//////////////////////////////////////////////////////////////////////
+	sprintf(debug_str, "servo5 %d", servo_msg.data);
+	msg_debug.data = debug_str;
+	debug_pub.publish( &msg_debug );
+
+	servo5.write( constrain( servo_msg.data, 0, 179) );
+}
 
 ros::Subscriber<std_msgs::Int16> rmotor_sub("rmotor_cmd", &RMotorCallBack);
 ros::Subscriber<std_msgs::Int16> lmotor_sub("lmotor_cmd", &LMotorCallBack);
+ros::Subscriber<std_msgs::Int16> servo1_sub("servo1_cmd", &Servo1CallBack);
+ros::Subscriber<std_msgs::Int16> servo2_sub("servo2_cmd", &Servo2CallBack);
+ros::Subscriber<std_msgs::Int16> servo3_sub("servo3_cmd", &Servo3CallBack);
+ros::Subscriber<std_msgs::Int16> servo4_sub("servo4_cmd", &Servo4CallBack);
+ros::Subscriber<std_msgs::Int16> servo5_sub("servo5_cmd", &Servo5CallBack);
 
 void setup()
 {
@@ -155,7 +218,18 @@ void setup()
 	nh.subscribe(rmotor_sub);
 	nh.subscribe(lmotor_sub);
 
-	  pinMode(13, OUTPUT);
+	nh.subscribe(servo1_sub);
+	nh.subscribe(servo2_sub);
+	nh.subscribe(servo3_sub);
+	nh.subscribe(servo4_sub);
+	nh.subscribe(servo5_sub);
+
+	servo1.attach(SERVO1);
+	servo2.attach(SERVO2);
+	servo3.attach(SERVO3);
+	servo4.attach(SERVO4);
+	servo5.attach(SERVO5);
+
 	  pinMode(P_LFWD, OUTPUT);
 	  pinMode(P_LREV, OUTPUT);
 	  pinMode(P_LENA, OUTPUT);
@@ -189,7 +263,6 @@ void loop()
     	msg_debug.data = debug_str;
     	debug_pub.publish( &msg_debug );
     	ticks_since_beat = 0;
-    	digitalWrite(13, HIGH - digitalRead(13)); // toggle the LED
 	}
 
     delay(LOOP_DLY);

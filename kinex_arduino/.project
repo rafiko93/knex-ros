@@ -83,6 +83,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>Servo</name>
+			<type>2</type>
+			<location>/usr/share/arduino/libraries/Servo</location>
+		</link>
+		<link>
 			<name>ros</name>
 			<type>2</type>
 			<location>/usr/share/arduino/libraries/ros_lib</location>
@@ -92,6 +97,10 @@
 		<variable>
 			<name>roslib</name>
 			<value>file:/usr/share/arduino/libraries/ros_lib</value>
+		</variable>
+		<variable>
+			<name>servolib</name>
+			<value>file:/usr/share/arduino/libraries/Servo</value>
 		</variable>
 	</variableList>
 </projectDescription>
