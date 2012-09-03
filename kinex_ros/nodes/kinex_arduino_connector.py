@@ -105,31 +105,48 @@ class MainWindow(wx.Frame):
         rospy.init_node('kinex_arduino_connector')
         rospy.Subscriber("arduino_debug", String, self.arduino_debug_callback)    
         
+        self.timer = wx.Timer()
+        self.ds1 = 0
+        self.ds2 = 0
+        
         self.joy = wx.Joystick(1)
         self.joy.SetCapture(self)
-        self.Bind(wx.EVT_JOY_BUTTON_DOWN, self.OnJoyBtn)
-        self.Bind(wx.EVT_JOY_BUTTON_UP, self.OnJoyBtn)
+        self.Bind(wx.EVT_JOY_BUTTON_DOWN, self.OnJoyBtnDown)
+        self.Bind(wx.EVT_JOY_BUTTON_UP, self.OnJoyBtnUp)
         self.Bind(wx.EVT_JOY_MOVE, self.OnJoyMove)
         rospy.loginfo ( "done initializing") 
         
     ######################################################################
-    def OnJoyBtn(self, event):
+    def OnJoyBtnUp(self, event):
+    ######################################################################
+        self.ds1 = 0
+        self.ds2 = 0
+        self.timer.Stop()
+        
+    ######################################################################
+    def OnJoyBtnDown(self, event):
     ######################################################################
         btn = event.GetButtonChange()
         rospy.loginfo( "Joystick button %d pressed" % btn ) 
-        s1 = self.sldServo1.GetValue()
-        s2 = self.sldServo2.GetValue()
         stepsize=5
         
         if (btn == 7):
-            s1 = s1 + stepsize
+            ds1 = stepsize
         if (btn == 9):
-            s1 = s1 - stepsize
+            ds1 = 0 - stepsize
         if (btn == 8):
-            s2 = s2 + stepsize
+            ds2 = stepsize
         if (btn == 6):
-            s2 = s2 - stepsize
+            ds2 =  0 - stepsize
+        self.timer.Start(100) 
         
+    ######################################################################
+    def OnTimer(self, event):
+    ######################################################################
+        s1 = self.sldServo1.GetValue()
+        s2 = self.sldServo2.GetValue()
+        s1 = s1 + ds1
+        s2 = s2 + ds2
         self.sldServo1.SetValue(s1)
         self.sldServo2.SetValue(s2)
         self.pub_servo1.publish( self.sldServo1.GetValue())
