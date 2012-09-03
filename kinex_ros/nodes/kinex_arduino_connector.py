@@ -104,12 +104,13 @@ class MainWindow(wx.Frame):
         self.pub_servo5 = rospy.Publisher('servo5_cmd', Int16)
         rospy.init_node('kinex_arduino_connector')
         rospy.Subscriber("arduino_debug", String, self.arduino_debug_callback)    
-        
-        self.timer = wx.Timer()
+        TIMER_ID = 200 
+        self.timer = wx.Timer(self, TIMER_ID) 
+        self.Bind(wx.EVT_TIMER, self.OnTimer, self.timer)
         self.ds1 = 0
         self.ds2 = 0
         
-        self.joy = wx.Joystick(1)
+        self.joy = wx.Joystick(0)
         self.joy.SetCapture(self)
         self.Bind(wx.EVT_JOY_BUTTON_DOWN, self.OnJoyBtnDown)
         self.Bind(wx.EVT_JOY_BUTTON_UP, self.OnJoyBtnUp)
@@ -131,24 +132,25 @@ class MainWindow(wx.Frame):
         stepsize=5
         
         if (btn == 7):
-            ds1 = stepsize
+            self.ds1 = stepsize
         if (btn == 9):
-            ds1 = 0 - stepsize
+            self.ds1 = 0 - stepsize
         if (btn == 8):
-            ds2 = stepsize
+            self.ds2 = stepsize
         if (btn == 6):
-            ds2 =  0 - stepsize
-        self.timer.Start(100) 
+            self.ds2 =  0 - stepsize
+        self.timer.Start(25) 
         
     ######################################################################
     def OnTimer(self, event):
     ######################################################################
         s1 = self.sldServo1.GetValue()
         s2 = self.sldServo2.GetValue()
-        s1 = s1 + ds1
-        s2 = s2 + ds2
-        self.sldServo1.SetValue(s1)
-        self.sldServo2.SetValue(s2)
+        s1 = s1 + self.ds1
+        s2 = s2 + self.ds2
+        rospy.loginfo("ontimer %d %d %d %d" %(s1,s2,self.ds1, self.ds2))
+        wx.CallAfter( self.sldServo1.SetValue, s1)
+        wx.CallAfter( self.sldServo2.SetValue, s2)
         self.pub_servo1.publish( self.sldServo1.GetValue())
         self.pub_servo2.publish( self.sldServo2.GetValue())
         
