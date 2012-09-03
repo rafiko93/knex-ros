@@ -24,7 +24,7 @@ class MainWindow(wx.Frame):
     ######################################################################
     def __init__(self, parent, title):
     ######################################################################
-        wx.Frame.__init__(self, parent, title=title, size=(350,200))
+        wx.Frame.__init__(self, parent, title=title, size=(250,500))
         panel = wx.Panel(self, -1)
         self.top_sizer = wx.BoxSizer(wx.VERTICAL)
         
@@ -61,16 +61,47 @@ class MainWindow(wx.Frame):
         self.row4_sizer = wx.BoxSizer( wx.HORIZONTAL )
         self.row4_sizer.Add( self.btnZero )
         
+        self.lblSliderServo1 = wx.StaticText(panel, -1, "Servos:", style=wx.ALIGN_CENTER| wx.ALIGN_CENTER_VERTICAL)
+        
+        self.row5_sizer = wx.BoxSizer( wx.HORIZONTAL )
+        self.row5_sizer.Add(self.lblSliderServo1)
+        
+        self.sldServo1 = wx.Slider(panel, -1, 0, 0, 179, wx.DefaultPosition, (250, 50), wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.sldServo2 = wx.Slider(panel, -1, 0, 0, 179, wx.DefaultPosition, (250, 50), wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.sldServo3 = wx.Slider(panel, -1, 0, 0, 179, wx.DefaultPosition, (250, 50), wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.sldServo4 = wx.Slider(panel, -1, 0, 0, 179, wx.DefaultPosition, (250, 50), wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.sldServo5 = wx.Slider(panel, -1, 0, 0, 179, wx.DefaultPosition, (250, 50), wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        
+        self.sldServo1.Bind(wx.EVT_SLIDER, self.OnSliderServo1)
+        self.sldServo2.Bind(wx.EVT_SLIDER, self.OnSliderServo2)
+        self.sldServo3.Bind(wx.EVT_SLIDER, self.OnSliderServo3)
+        self.sldServo4.Bind(wx.EVT_SLIDER, self.OnSliderServo4)
+        self.sldServo5.Bind(wx.EVT_SLIDER, self.OnSliderServo5)
+        self.row6_sizer = wx.BoxSizer( wx.VERTICAL )
+        
+        self.row6_sizer.Add(self.sldServo1)
+        self.row6_sizer.Add(self.sldServo2)
+        self.row6_sizer.Add(self.sldServo3)
+        self.row6_sizer.Add(self.sldServo4)
+        self.row6_sizer.Add(self.sldServo5)
+        
         self.top_sizer.Add(self.row1_sizer)
         self.top_sizer.Add(self.row2_sizer)
         self.top_sizer.Add(self.row3_sizer)
         self.top_sizer.Add(self.row4_sizer)
+        self.top_sizer.Add(self.row5_sizer)
+        self.top_sizer.Add(self.row6_sizer)
         
         panel.SetSizer(self.top_sizer)
                 
         pub = rospy.Publisher('chatter', String)
         self.pub_lmotor = rospy.Publisher('lmotor_cmd', Int16)
         self.pub_rmotor = rospy.Publisher('rmotor_cmd', Int16)
+        self.pub_servo1 = rospy.Publisher('servo1_cmd', Int16)
+        self.pub_servo2 = rospy.Publisher('servo2_cmd', Int16)
+        self.pub_servo3 = rospy.Publisher('servo3_cmd', Int16)
+        self.pub_servo4 = rospy.Publisher('servo4_cmd', Int16)
+        self.pub_servo5 = rospy.Publisher('servo5_cmd', Int16)
         rospy.init_node('kinex_arduino_connector')
         rospy.Subscriber("arduino_debug", String, self.arduino_debug_callback)    
         
@@ -84,7 +115,25 @@ class MainWindow(wx.Frame):
     ######################################################################
     def OnJoyBtn(self, event):
     ######################################################################
-        rospy.loginfo( "Joystick button pressed" )
+        btn = event.GetButtonChange()
+        rospy.loginfo( "Joystick button %d pressed" % btn ) 
+        s1 = self.sldServo1.GetValue()
+        s2 = self.sldServo2.GetValue()
+        stepsize=5
+        
+        if (btn == 7):
+            s1 = s1 + stepsize
+        if (btn == 9):
+            s1 = s1 - stepsize
+        if (btn == 8):
+            s2 = s2 + stepsize
+        if (btn == 6):
+            s2 = s2 - stepsize
+        
+        self.sldServo1.SetValue(s1)
+        self.sldServo2.SetValue(s2)
+        self.pub_servo1.publish( self.sldServo1.GetValue())
+        self.pub_servo2.publish( self.sldServo2.GetValue())
         
     ######################################################################
     def OnJoyMove(self, event):
@@ -122,8 +171,8 @@ class MainWindow(wx.Frame):
         
         wx.CallAfter( self.sldLeft.SetValue, l * 255)
         wx.CallAfter( self.sldRight.SetValue, r * 255)
-        self.pub_lmotor.publish( l * 255 )
-        self.pub_rmotor.publish( r * 255)
+        self.pub_lmotor.publish( l * -255 )
+        self.pub_rmotor.publish( r * -255)
         
     ######################################################################
     def OnSliderLeft(self, evt):
@@ -147,6 +196,35 @@ class MainWindow(wx.Frame):
         self.pub_lmotor.publish(0)
         
         
+    ######################################################################
+    def OnSliderServo1(self, evt):
+    ######################################################################
+        rospy.loginfo("Servo1 slider value %d" % self.sldServo1.GetValue())
+        self.pub_servo1.publish( self.sldServo1.GetValue())
+        
+    ######################################################################
+    def OnSliderServo2(self, evt):
+    ######################################################################
+        rospy.loginfo("Servo2 slider value %d" % self.sldServo2.GetValue())
+        self.pub_servo2.publish( self.sldServo2.GetValue())
+        
+    ######################################################################
+    def OnSliderServo3(self, evt):
+    ######################################################################
+        rospy.loginfo("Servo3 slider value %d" % self.sldServo3.GetValue())
+        self.pub_servo3.publish( self.sldServo3.GetValue())
+        
+    ######################################################################
+    def OnSliderServo4(self, evt):
+    ######################################################################
+        rospy.loginfo("Servo4 slider value %d" % self.sldServo4.GetValue())
+        self.pub_servo4.publish( self.sldServo4.GetValue())
+        
+    ######################################################################
+    def OnSliderServo5(self, evt):
+    ######################################################################
+        rospy.loginfo("Servo5 slider value %d" % self.sldServo5.GetValue())
+        self.pub_servo5.publish( self.sldServo5.GetValue())
 
 
 ######################################################################
