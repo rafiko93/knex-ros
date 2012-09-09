@@ -1,5 +1,9 @@
 <launch>
+ <rosparam param="rate">8.0</rosparam>
+ <rosparam param="ticks_meter">56</rosparam>
+ <rosparam param="base_width">0.245</rosparam>
 
   <node pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0" name="serial_node" respawn="true"/>
   <node pkg="kinex_ros" type="kinex_arduino_connector.py" name="kinex_arduino_connector" output="screen"/>
+  <node pkg="kinex_ros" type="diff_tf.py" name="diff_tf" output="screen"/>
 </launch>

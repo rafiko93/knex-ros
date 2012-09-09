@@ -110,7 +110,7 @@ class MainWindow(wx.Frame):
         self.ds1 = 0
         self.ds2 = 0
         
-        self.joy = wx.Joystick(0)
+        self.joy = wx.Joystick(1)
         self.joy.SetCapture(self)
         self.Bind(wx.EVT_JOY_BUTTON_DOWN, self.OnJoyBtnDown)
         self.Bind(wx.EVT_JOY_BUTTON_UP, self.OnJoyBtnUp)
