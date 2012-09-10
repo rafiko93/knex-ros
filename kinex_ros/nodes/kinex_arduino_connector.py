@@ -128,7 +128,7 @@ class MainWindow(wx.Frame):
     def OnJoyBtnDown(self, event):
     ######################################################################
         btn = event.GetButtonChange()
-        rospy.loginfo( "Joystick button %d pressed" % btn ) 
+        # rospy.loginfo( "Joystick button %d pressed" % btn ) 
         stepsize=5
         
         if (btn == 7):
@@ -148,7 +148,7 @@ class MainWindow(wx.Frame):
         s2 = self.sldServo2.GetValue()
         s1 = s1 + self.ds1
         s2 = s2 + self.ds2
-        rospy.loginfo("ontimer %d %d %d %d" %(s1,s2,self.ds1, self.ds2))
+        # rospy.loginfo("ontimer %d %d %d %d" %(s1,s2,self.ds1, self.ds2))
         wx.CallAfter( self.sldServo1.SetValue, s1)
         wx.CallAfter( self.sldServo2.SetValue, s2)
         self.pub_servo1.publish( self.sldServo1.GetValue())
@@ -159,14 +159,14 @@ class MainWindow(wx.Frame):
     ######################################################################
         pos = self.joy.GetPosition()
         max = self.joy.GetXMax()
-        rospy.loginfo( "Joystick move x=%d, y=%d max=%d" % (pos[0], pos[1], max) )
+        # rospy.loginfo( "Joystick move x=%d, y=%d max=%d" % (pos[0], pos[1], max) )
         self.diff_drive(float(pos[0]) / max, float(pos[1]) / max)
         
         
     ######################################################################
     def diff_drive(self, x, y):
     ######################################################################
-        rospy.loginfo("diffdrive x=%0.3f, y=%0.3f" % (x,y))
+        # rospy.loginfo("diffdrive x=%0.3f, y=%0.3f" % (x,y))
         threshold = 0.1
         if ( abs(x) < threshold and abs(y) < threshold ):
             l = 0
