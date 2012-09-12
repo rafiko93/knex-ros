@@ -6,7 +6,7 @@
    
 import rospy
 import roslib
-roslib.load_manifest('kinex_ros')
+roslib.load_manifest('knex_ros')
 
 from std_msgs.msg import Int16
 from std_msgs.msg import Float32

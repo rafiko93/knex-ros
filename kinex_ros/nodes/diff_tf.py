@@ -8,7 +8,7 @@
 
 import rospy
 import roslib
-roslib.load_manifest('kinex_ros')
+roslib.load_manifest('knex_ros')
 from math import sin, cos, pi
 
 from geometry_msgs.msg import Quaternion

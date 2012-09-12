@@ -70,7 +70,7 @@ if __name__ == '__main__':
     """main"""
     rospy.init_node("range_to_laser")
     rospy.loginfo("range_to_laser started")
-    roslib.load_manifest('kinex_ros')
+    roslib.load_manifest('knex_ros')
     
     rospy.Subscriber("range_filtered", Float32, rangeCallback)
     servo_pub = rospy.Publisher('servo1_cmd', Int16)

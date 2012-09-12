@@ -4,8 +4,8 @@
  <rosparam param="base_width">0.245</rosparam>
 
   <node pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0" name="serial_node" respawn="true"/>
-  <node pkg="kinex_ros" type="kinex_arduino_connector.py" name="kinex_arduino_connector" output="screen"/>
-  <node pkg="kinex_ros" type="diff_tf.py" name="diff_tf" output="screen"/>
-  <node pkg="kinex_ros" type="range_filter.py" name="range_filter" output="screen"/>
-  <node pkg="kinex_ros" type="range_to_laser.py" name="range_to_laser" output="screen"/>
+  <node pkg="knex_ros" type="knex_arduino_connector.py" name="knex_arduino_connector" output="screen"/>
+  <node pkg="knex_ros" type="diff_tf.py" name="diff_tf" output="screen"/>
+  <node pkg="knex_ros" type="range_filter.py" name="range_filter" output="screen"/>
+  <node pkg="knex_ros" type="range_to_laser.py" name="range_to_laser" output="screen"/>
 </launch>

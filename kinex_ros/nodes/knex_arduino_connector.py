@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import roslib; roslib.load_manifest('kinex_ros')
+import roslib; roslib.load_manifest('knex_ros')
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Int16
@@ -102,7 +102,7 @@ class MainWindow(wx.Frame):
         self.pub_servo3 = rospy.Publisher('servo3_cmd', Int16)
         self.pub_servo4 = rospy.Publisher('servo4_cmd', Int16)
         self.pub_servo5 = rospy.Publisher('servo5_cmd', Int16)
-        rospy.init_node('kinex_arduino_connector')
+        rospy.init_node('knex_arduino_connector')
         rospy.Subscriber("arduino_debug", String, self.arduino_debug_callback)    
         TIMER_ID = 200 
         self.timer = wx.Timer(self, TIMER_ID) 
