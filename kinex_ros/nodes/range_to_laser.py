@@ -23,16 +23,16 @@ def rangeCallback(msg):
 ########################################################
 def doAScan(direction):
 ########################################################
-    scan_rate = 100   # hertz between steps
+    scan_rate = 10   # hertz between steps
     
     if direction:
-        angle_start = 0
-        angle_stop = 180
-        angle_step = 1
-    else:
         angle_start = 180
         angle_stop = 0
         angle_step = -1
+    else:
+        angle_start = 0
+        angle_stop = 180
+        angle_step = 1
     
     servo_pub.publish( angle_start )
     

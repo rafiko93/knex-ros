@@ -16,11 +16,15 @@ rolling_ave = 0.0
 
 
 def inputCallback(msg):
+    b = 112.7
+    m = -1.31
     cur_val = msg.data
     global rolling_ave
-    if cur_val < 500:
+    if cur_val < 900:
         rolling_ave = cur_val * weight + rolling_ave * ( 1 - weight )
-        filtered_pub.publish( rolling_ave)
+        rolling_meters = b * rolling_ave ** m
+        
+        filtered_pub.publish( rolling_meters)
         
     
 if __name__ == '__main__':
