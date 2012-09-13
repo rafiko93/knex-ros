@@ -56,8 +56,8 @@ class DiffTf:
         rospy.loginfo("%s: got rate %0.1f " %(self.nodename, self.rate))
         
         # subscriptions
-        rospy.Subscriber("lwheel", Int16, self.lwheelCallback)
-        rospy.Subscriber("rwheel", Int16, self.rwheelCallback)
+        rospy.Subscriber("lwheel_scaled", Int16, self.lwheelCallback)
+        rospy.Subscriber("rwheel_scaled", Int16, self.rwheelCallback)
         self.odomPub = rospy.Publisher("odom", Odometry)
         self.odomBroadcaster = TransformBroadcaster()
         while not rospy.is_shutdown():

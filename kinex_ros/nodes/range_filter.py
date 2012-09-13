@@ -10,29 +10,54 @@ roslib.load_manifest('knex_ros')
 
 from std_msgs.msg import Int16
 from std_msgs.msg import Float32
+from numpy import array
+
 weight = 0.1  # 1 = this value only 0 = prev value only
 cur_val = 0
-rolling_ave = 0.0
 
+rolling_ave = 0.0
+rolling_std = 0.0
+rolling_meters = 0.0
+prev = [0] * 10
 
 def inputCallback(msg):
-    b = 112.7
+    b = 266
     m = -1.31
     cur_val = msg.data
+    
     global rolling_ave
+    global rolling_std
+    global prev
+    
     if cur_val < 900:
-        rolling_ave = cur_val * weight + rolling_ave * ( 1 - weight )
+        prev.append(cur_val)
+        del prev[0]
+        
+        p = array(prev)
+        rolling_ave = p.mean()
+        rolling_std = p.std()
+        
+        p = array(prev)
+        rolling_ave = p.mean()
+        rolling_std = p.std()
+        
         rolling_meters = b * rolling_ave ** m
         
-        filtered_pub.publish( rolling_meters)
+        filtered_pub.publish( rolling_meters )
+        std_pub.publish( rolling_std )
         
     
 if __name__ == '__main__':
     """ main"""
     rospy.init_node("range_filter")
     rospy.loginfo("range_filter started")
+    rolling_pts = rospy.get_param('rolling_pts',10)
+    global prev
+    prev = [0] * rolling_pts
     
     rospy.Subscriber("range", Int16, inputCallback)
     
     filtered_pub = rospy.Publisher("range_filtered", Float32)
+    std_pub = rospy.Publisher("range_std", Float32)
+    
     rospy.spin()
