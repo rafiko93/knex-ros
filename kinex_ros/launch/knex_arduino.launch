@@ -12,4 +12,7 @@
   <node pkg="knex_ros" type="range_filter.py" name="range_filter" output="screen"/>
   <node pkg="knex_ros" type="range_to_laser.py" name="range_to_laser" output="screen"/> 
   <node pkg="knex_ros" type="wheel_scaler.py" name="wheel_scaler" output="screen"/>
+  <node pkg="knex_ros" type="pid_velocity.py" name="wheel_scaler" output="screen">
+      <rosparam param="Kp">10</rosparam>
+  </node>
 </launch>
