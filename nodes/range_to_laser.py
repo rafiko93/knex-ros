@@ -68,7 +68,7 @@ def doAScan(direction):
         scan.intensities.reverse()
     scan.ranges = ranges
     scan.header.stamp = scan_time;
-    scan.header.frame_id = 'base_link'
+    scan.header.frame_id = 'scanner'
     # TODO: change this to 'laser_frame'.  (create the transform first)
     scan.angle_min = -1.57
     scan.angle_max = 1.57
