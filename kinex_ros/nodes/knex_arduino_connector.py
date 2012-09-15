@@ -3,6 +3,7 @@ import roslib; roslib.load_manifest('knex_ros')
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Int16
+from std_msgs.msg import Float32
 import wx
 
 
@@ -24,7 +25,7 @@ class MainWindow(wx.Frame):
     ######################################################################
     def __init__(self, parent, title):
     ######################################################################
-        wx.Frame.__init__(self, parent, title=title, size=(250,500))
+        wx.Frame.__init__(self, parent, title=title, size=(300,600))
         panel = wx.Panel(self, -1)
         self.top_sizer = wx.BoxSizer(wx.VERTICAL)
         
@@ -84,6 +85,20 @@ class MainWindow(wx.Frame):
         self.row6_sizer.Add(self.sldServo3)
         self.row6_sizer.Add(self.sldServo4)
         self.row6_sizer.Add(self.sldServo5)
+       
+        self.lblSpeed = wx.StaticText(panel, -1, "Speed:", style=wx.ALIGN_CENTER| wx.ALIGN_CENTER_VERTICAL)
+        self.sldSpeed = wx.Slider(panel, -1, 0, -50, 50, wx.DefaultPosition, (250, 50), wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.lblAngle = wx.StaticText(panel, -1, "Angle:", style=wx.ALIGN_CENTER| wx.ALIGN_CENTER_VERTICAL)
+        self.sldAngle = wx.Slider(panel, -1, 0, -100, 100, wx.DefaultPosition, (250, 50), wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS)
+        self.sldSpeed.Bind(wx.EVT_SLIDER, self.OnSliderSpeed)
+        self.sldSpeed.Bind(wx.EVT_LEFT_UP, self.OnSliderUp)
+        self.row7_sizer = wx.BoxSizer( wx.VERTICAL )
+        
+        self.row7_sizer.Add(self.lblSpeed)
+        self.row7_sizer.Add(self.sldSpeed)
+        self.row7_sizer.Add(self.lblAngle)
+        self.row7_sizer.Add(self.sldAngle)
+        
         
         self.top_sizer.Add(self.row1_sizer)
         self.top_sizer.Add(self.row2_sizer)
@@ -91,6 +106,7 @@ class MainWindow(wx.Frame):
         self.top_sizer.Add(self.row4_sizer)
         self.top_sizer.Add(self.row5_sizer)
         self.top_sizer.Add(self.row6_sizer)
+        self.top_sizer.Add(self.row7_sizer)
         
         panel.SetSizer(self.top_sizer)
                 
@@ -102,11 +118,16 @@ class MainWindow(wx.Frame):
         self.pub_servo3 = rospy.Publisher('servo3_cmd', Int16)
         self.pub_servo4 = rospy.Publisher('servo4_cmd', Int16)
         self.pub_servo5 = rospy.Publisher('servo5_cmd', Int16)
+        self.pub_lwheel_vtarget = rospy.Publisher('lwheel_vtarget', Float32)
+        self.pub_rwheel_vtarget = rospy.Publisher('rwheel_vtarget', Float32)
         rospy.init_node('knex_arduino_connector')
         rospy.Subscriber("arduino_debug", String, self.arduino_debug_callback)    
         TIMER_ID = 200 
         self.timer = wx.Timer(self, TIMER_ID) 
         self.Bind(wx.EVT_TIMER, self.OnTimer, self.timer)
+        SPEED_TIMER_ID = 201
+        self.speed_timer = wx.Timer(self, SPEED_TIMER_ID) 
+        self.Bind(wx.EVT_TIMER, self.OnSpeedTimer, self.speed_timer)
         self.ds1 = 0
         self.ds2 = 0
         
@@ -244,6 +265,39 @@ class MainWindow(wx.Frame):
     ######################################################################
         rospy.loginfo("Servo5 slider value %d" % self.sldServo5.GetValue())
         self.pub_servo5.publish( self.sldServo5.GetValue())
+        
+    ######################################################################
+    def OnSliderSpeed(self, evt):
+    ######################################################################
+        rospy.loginfo("OnSliderSpeed")
+        self.speed = self.sldSpeed.GetValue()
+        if abs(self.speed) < 2:
+            self.speed_timer.Stop()
+        else:
+            self.speed_timer.Start(25)
+        
+    ######################################################################
+    def OnSpeedTimer(self, event):
+    ######################################################################
+        angle = self.sldAngle.GetValue()
+        speed = self.sldSpeed.GetValue()
+        rspeed = -1.0 * (1.0 + angle / 100) * speed
+        lspeed = -1.0 * (1.0 - angle / 100) * speed
+        if abs(lspeed) > 2:
+            self.pub_lwheel_vtarget.publish(lspeed)
+        if abs(rspeed) > 2:
+            self.pub_rwheel_vtarget.publish(rspeed)
+        
+    ######################################################################
+    def OnSliderUp(self, event):
+    ######################################################################
+        self.speed_timer.Stop()
+        self.pub_lwheel_vtarget.publish(0)
+        self.pub_rwheel_vtarget.publish(0)
+        wx.CallAfter( self.sldSpeed.SetValue, 0)
+        event.Skip()
+        
+        
 
 
 ######################################################################
