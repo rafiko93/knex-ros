@@ -51,10 +51,10 @@ def doAScan(direction):
         servo_pub.publish( angle )
         wait_start = rospy.Time.now()
         r.sleep()
-        while latest_std > std_threshold:
-            if rospy.Time.now() - wait_start > rospy.Duration(std_timeout):
-                rospy.loginfo("-W- range_to_laser timed out waiting for std_dev (%0.2f) to get below threshold (%0.2f)" % (latest_std, std_threshold))
-                break
+        #while latest_std > std_threshold:
+        #    if rospy.Time.now() - wait_start > rospy.Duration(std_timeout):
+        #        rospy.loginfo("-W- range_to_laser timed out waiting for std_dev (%0.2f) to get below threshold (%0.2f)" % (latest_std, std_threshold))
+        #        break
         # rospy.loginfo("angle %d range:%0.2f" % (angle, latest_range))
         num_readings += 1
         ranges.append(latest_range * scale)

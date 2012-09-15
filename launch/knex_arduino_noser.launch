@@ -8,8 +8,6 @@
  <param name="robot_description" textfile="knex.urdf" />
  
  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
- 
- 
 
   <node pkg="knex_ros" type="knex_arduino_connector.py" name="knex_arduino_connector" output="screen"/>
   <node pkg="knex_ros" type="diff_tf.py" name="diff_tf" output="screen"/>
@@ -40,4 +38,22 @@
       <remap from="motor_cmd" to="rmotor_cmd"/>
       <remap from="wheel_vtarget" to="rwheel_vtarget"/>
   </node> 
+  
+  
+  <node pkg="gmapping" type="slam_gmapping" name="gmapping" output="screen">
+    <remap from="scan" to="/laser"/>
+    <rosparam param="linearUpdate">0.04</rosparam>
+    <rosparam param="odom_frame">odom</rosparam>
+    <rosparam param="delta">0.02</rosparam>
+    <rosparam param="lstep">0.02</rosparam>
+    <rosparam param="astep">0.02</rosparam>
+    <rosparam param="xmin">-10.0</rosparam>
+    <rosparam param="xmax">10.0</rosparam>
+    <rosparam param="ymin">-10.0</rosparam>
+    <rosparam param="ymax">10.0</rosparam>
+    <rosparam param="angularUpdate">0.2</rosparam>  
+  </node>
+  
+  <node pkg="rviz" type="rviz" name="rviz" output="screen"/>
+  
 </launch>

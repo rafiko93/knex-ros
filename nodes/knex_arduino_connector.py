@@ -269,7 +269,7 @@ class MainWindow(wx.Frame):
     ######################################################################
     def OnSliderSpeed(self, evt):
     ######################################################################
-        rospy.loginfo("OnSliderSpeed")
+        # rospy.loginfo("OnSliderSpeed")
         self.speed = self.sldSpeed.GetValue()
         if abs(self.speed) < 2:
             self.speed_timer.Stop()
@@ -281,8 +281,8 @@ class MainWindow(wx.Frame):
     ######################################################################
         angle = self.sldAngle.GetValue()
         speed = self.sldSpeed.GetValue()
-        rspeed = -1.0 * (1.0 + angle / 100) * speed
-        lspeed = -1.0 * (1.0 - angle / 100) * speed
+        rspeed = -1.0 * (1.0 - angle / 100.0) * speed
+        lspeed = -1.0 * (1.0 + angle / 100.0) * speed
         if abs(lspeed) > 2:
             self.pub_lwheel_vtarget.publish(lspeed)
         if abs(rspeed) > 2:

@@ -17,7 +17,6 @@ wheel_prev = 0
 integral = 0
 previous_error = 0
 ticks_since_target = 0
-then = 0
 
 def wheelCallback(msg):
     global wheel_latest
@@ -62,8 +61,8 @@ def do_pid():
     if (target == 0):
         motor = 0
     
-    rospy.loginfo("vel:%0.2f tar:%0.2f err:%0.2f int:%0.2f der:%0.2f ## motor:%d " % 
-                  (vel, target, error, integral, derivative, motor))
+    # rospy.loginfo("vel:%0.2f tar:%0.2f err:%0.2f int:%0.2f der:%0.2f ## motor:%d " % 
+    #              (vel, target, error, integral, derivative, motor))
     
     
     pub_motor.publish(motor)
@@ -74,6 +73,8 @@ if __name__ == '__main__':
     """ main """
     global then 
     global ticks_since_target
+    global integral
+    then = 0
     rospy.init_node("pid_velocity")
     nodename = "pid_velocity"
     rospy.loginfo("%s started" % nodename)
@@ -106,5 +107,7 @@ if __name__ == '__main__':
             ticks_since_target += 1
             if ticks_since_target == timeout_ticks:
                 pub_motor.publish(0)
+                prev_vel = [0.0] * rolling_pts
+                integral = 0
         r.sleep()
     
