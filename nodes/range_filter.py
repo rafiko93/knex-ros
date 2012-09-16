@@ -18,7 +18,7 @@ cur_val = 0
 rolling_ave = 0.0
 rolling_std = 0.0
 rolling_meters = 0.0
-prev = [0] * 10
+prev = [0] * 5
 
 def inputCallback(msg):
     b = 266

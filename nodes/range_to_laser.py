@@ -29,7 +29,7 @@ def stdCallback(msg):
 ########################################################
 def doAScan(direction):
 ########################################################
-    scan_rate = 40   # hertz between steps
+    scan_rate = 60   # hertz between steps
    
     if direction:
         angle_start = 180
@@ -102,11 +102,11 @@ if __name__ == '__main__':
     
     r = rospy.Rate(1)  # hertz
     while not rospy.is_shutdown():
-        doAScan(1)
+        doAScan(0)
         r.sleep()
         servo_pub.publish( 0 )
         rospy.sleep(1)
         
-        doAScan(0)
-        r.sleep()
+#        doAScan(1)
+#        r.sleep()
         
