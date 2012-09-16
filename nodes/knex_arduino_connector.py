@@ -181,7 +181,7 @@ class MainWindow(wx.Frame):
         pos = self.joy.GetPosition()
         max = self.joy.GetXMax()
         # rospy.loginfo( "Joystick move x=%d, y=%d max=%d" % (pos[0], pos[1], max) )
-        self.diff_drive(float(pos[0]) / max, float(pos[1]) / max)
+        self.diff_drive(float(-pos[0]) / max, float(pos[1]) / max)
         
         
     ######################################################################
@@ -309,12 +309,6 @@ def launch_window():
     frame = MainWindow(None, "Kinex arduino connector") # A Frame is a top-level window.
     frame.Show(True)     # Show the frame.
     app.MainLoop()
-
-    while not rospy.is_shutdown():
-        str = "hello world %s"%rospy.get_time()
-        rospy.loginfo(str)
-        pub.publish(String(str))
-        rospy.sleep(1.0)
         
         
         

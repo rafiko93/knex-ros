@@ -45,8 +45,8 @@
     
     <rosparam param="linearUpdate">0.04</rosparam>
     <rosparam param="odom_frame">odom</rosparam>
-    <rosparam param="kernelSize">0.04</rosparam>
-    <rosparam param="delta">0.05</rosparam>
+    <rosparam param="kernelSize">0.05</rosparam>
+    <rosparam param="delta">0.04</rosparam>
     <rosparam param="lstep">0.02</rosparam>
     <rosparam param="astep">0.02</rosparam>
     <rosparam param="xmin">-10.0</rosparam>
@@ -54,8 +54,8 @@
     <rosparam param="ymin">-10.0</rosparam>
     <rosparam param="ymax">10.0</rosparam>
     <rosparam param="angularUpdate">0.2</rosparam>  
-    <rosparam param="llsamplerange">0.001</rosparam>
-    <rosparam param="llsamplestep">0.001</rosparam>
+    <rosparam param="llsamplerange">0.01</rosparam>
+    <rosparam param="llsamplestep">0.01</rosparam>
     <rosparam param="maxRange">1.0</rosparam>
     <rosparam param="srr">0.001</rosparam>
     <rosparam param="srt">0.002</rosparam>
