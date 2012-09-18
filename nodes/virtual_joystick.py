@@ -4,6 +4,7 @@ import sys
 import roslib; roslib.load_manifest('knex_ros')
 import rospy
 from geometry_msgs.msg import Twist
+import inspect, os
 
 
 from PySide import QtGui, QtCore
@@ -26,10 +27,13 @@ class MainWindow(QtGui.QMainWindow):
     #####################################################################    
     def initUI(self):      
     #####################################################################    
+        
+        img_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + "/../images/crosshair.jpg"
+        rospy.loginfo("initUI img_path: %s" % img_path)
 
         self.statusBar()
         
-        self.setStyleSheet("QMainWindow { border-image: url(crosshair.jpg); }")
+        self.setStyleSheet("QMainWindow { border-image: url(%s); }" % img_path)
         
                 
         self.setGeometry(0, 600, 200, 200)
@@ -78,7 +82,7 @@ class MainWindow(QtGui.QMainWindow):
     #######################################################
     def pubTwist(self):
     #######################################################
-        rospy.loginfo("publishing twist from (%0.3f,%0.3f)" %(self.x,self.y))
+        # rospy.loginfo("publishing twist from (%0.3f,%0.3f)" %(self.x,self.y))
         self.twist = Twist()
         self.twist.linear.x = self.y * (x_max - x_min) + x_min
         self.twist.linear.y = 0
@@ -112,4 +116,4 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-    except rospy.ROSInteruptException: pass
+    except rospy.ROSInterruptException: pass

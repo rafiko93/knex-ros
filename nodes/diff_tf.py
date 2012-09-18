@@ -4,6 +4,7 @@
    diff_tf.py - follows the output of a wheel encoder and
    creates tf and odometry messages.
    some code borrowed from the arbotix diff_controller script
+   A good reference: http://rossum.sourceforge.net/papers/DiffSteer/
 """
 
 import rospy

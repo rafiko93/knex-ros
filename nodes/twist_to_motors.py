@@ -20,7 +20,6 @@ def twistCallback(msg):
     dr = msg.angular.z
     
     dy = msg.linear.y
-    rospy.loginfo('twist_callback')
     
 #############################################################
 #############################################################
@@ -38,8 +37,8 @@ if __name__ == '__main__':
     rospy.Subscriber('twist', Twist, twistCallback)
     
     
-    rate = rospy.get_param("~rate", 20)
-    timeout_ticks = rospy.get_param("~timeout_ticks", 5)
+    rate = rospy.get_param("~rate", 40)
+    timeout_ticks = rospy.get_param("~timeout_ticks", 2)
     
     r = rospy.Rate(rate)
     then = rospy.Time.now()
@@ -52,9 +51,9 @@ if __name__ == '__main__':
             # dx = (l + r) / 2
             # dr = (r - l) / w
             
-            left = 1.0 * dx + dr * w / 2 
-            right = 1.0 * dx - dr * w / 2
-            rospy.loginfo("publishing: (%d, %d)", left, right) 
+            right = 1.0 * dx + dr * w / 2 
+            left = 1.0 * dx - dr * w / 2
+            # rospy.loginfo("publishing: (%d, %d)", left, right) 
             pub_lmotor.publish(left)
             pub_rmotor.publish(right)
             
