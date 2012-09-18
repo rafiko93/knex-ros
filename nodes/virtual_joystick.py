@@ -44,6 +44,7 @@ class MainWindow(QtGui.QMainWindow):
     #####################################################################    
         self.statusBar().showMessage('mouse clicked')
         self.timer.start(self.timer_rate, self)
+        self.get_position(event)
         
     #####################################################################    
     def mouseReleaseEvent(self, event):
@@ -53,6 +54,11 @@ class MainWindow(QtGui.QMainWindow):
         
     #####################################################################    
     def mouseMoveEvent(self, event):
+    #####################################################################    
+        self.get_position(event)
+        
+    #####################################################################    
+    def get_position(self, event):
     #####################################################################    
         s = self.size()
         s_w = s.width()
@@ -74,12 +80,12 @@ class MainWindow(QtGui.QMainWindow):
     #######################################################
         rospy.loginfo("publishing twist from (%0.3f,%0.3f)" %(self.x,self.y))
         self.twist = Twist()
-        self.twist.linear.x = self.y
+        self.twist.linear.x = self.y * (x_max - x_min) + x_min
         self.twist.linear.y = 0
         self.twist.linear.z = 0
         self.twist.angular.x = 0
         self.twist.angular.y = 0
-        self.twist.angular.z = self.x
+        self.twist.angular.z = self.x * (r_max - r_min) + r_min
         self.pub_twist.publish( self.twist )
         
 ##########################################################################
@@ -89,10 +95,21 @@ def main():
 ##########################################################################
     rospy.init_node('virtual_joystick')
     rospy.loginfo('virtual_joystick started')
+    global x_min
+    global x_max
+    global r_min
+    global r_max
+    
+    x_min = rospy.get_param("~x_min", -40.0)
+    x_max = rospy.get_param("~x_max", 40.0)
+    r_min = rospy.get_param("~r_min", -200.0)
+    r_max = rospy.get_param("~r_max", 200.0)
     
     app = QtGui.QApplication(sys.argv)
     ex = MainWindow()
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except rospy.ROSInteruptException: pass

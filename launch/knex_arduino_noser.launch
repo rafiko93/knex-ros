@@ -5,7 +5,7 @@
  <rosparam param="base_width">0.245</rosparam>
  <rosparam param="distance_scale">1</rosparam>
  <rosparam param="rolling_pts">10</rosparam>
- <param name="robot_description" textfile="knex.urdf" />
+ <param name="robot_description" textfile="$(find knex_ros)/knex.urdf" />
  
  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
 
@@ -61,6 +61,11 @@
     <rosparam param="srt">0.002</rosparam>
     <rosparam param="str">0.001</rosparam>
     <rosparam param="stt">0.002</rosparam>
+  </node>
+  
+  <node pkg="knex_ros" type="virtual_joystick.py" name="virtual_joystick" output="screen"/>
+  <node pkg="knex_ros" type="twist_to_motors.py" name="twist_to_motors" output="screen">
+    <rosparam param="base_width">0.245</rosparam>
   </node>
   
   <node pkg="rviz" type="rviz" name="rviz" output="screen"/>
