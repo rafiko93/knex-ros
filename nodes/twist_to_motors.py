@@ -20,7 +20,6 @@ def twistCallback(msg):
     dr = msg.angular.z
     
     dy = msg.linear.y
-    # some text
     
 #############################################################
 #############################################################
@@ -38,7 +37,7 @@ if __name__ == '__main__':
     rospy.Subscriber('twist', Twist, twistCallback)
     
     
-    rate = rospy.get_param("~rate", 40)
+    rate = rospy.get_param("~rate", 50)
     timeout_ticks = rospy.get_param("~timeout_ticks", 2)
     
     r = rospy.Rate(rate)

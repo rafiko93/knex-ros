@@ -16,7 +16,7 @@ wheel_latest=0
 def wheelCallback(msg):
 ######################################################
     global wheel_latest
-    wheel_latest = msg.data
+    wheel_latest = 1.0 * msg.data / ticks_per_meter
     
 ######################################################
 def targetCallback(msg):
@@ -41,9 +41,10 @@ if __name__ == '__main__':
     out_max = rospy.get_param('~out_max',255)
     rate = rospy.get_param('~rate',20)
     rolling_pts = rospy.get_param('~rolling_pts',20)
-    timeout_ticks = rospy.get_param('~timeout_ticks',20)
+    timeout_ticks = rospy.get_param('~timeout_ticks',2)
+    ticks_per_meter = rospy.get_param('ticks_meter', 20)
     prev_vel = [0.0] * rolling_pts
-    rospy.loginfo("%s got Kp:%0.3f Ki:%0.3f Kd:%0.3f" % (nodename, Kp, Ki, Kd))
+    rospy.loginfo("%s got Kp:%0.3f Ki:%0.3f Kd:%0.3f tpm:%0.3f" % (nodename, Kp, Ki, Kd, ticks_per_meter))
     
     #### subscribers/publishsers 
     rospy.Subscriber("wheel", Int16, wheelCallback) 

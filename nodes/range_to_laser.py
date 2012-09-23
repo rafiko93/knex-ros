@@ -29,7 +29,7 @@ def stdCallback(msg):
 ########################################################
 def doAScan(direction):
 ########################################################
-    scan_rate = 60   # hertz between steps
+    scan_rate = 20   # hertz between steps
    
     if direction:
         angle_start = 180
@@ -51,10 +51,10 @@ def doAScan(direction):
         servo_pub.publish( angle )
         wait_start = rospy.Time.now()
         r.sleep()
-        #while latest_std > std_threshold:
-        #    if rospy.Time.now() - wait_start > rospy.Duration(std_timeout):
-        #        rospy.loginfo("-W- range_to_laser timed out waiting for std_dev (%0.2f) to get below threshold (%0.2f)" % (latest_std, std_threshold))
-        #        break
+        while latest_std > std_threshold:
+            if rospy.Time.now() - wait_start > rospy.Duration(std_timeout):
+                rospy.loginfo("-W- range_to_laser timed out waiting for std_dev (%0.2f) to get below threshold (%0.2f)" % (latest_std, std_threshold) )
+                break
         # rospy.loginfo("angle %d range:%0.2f" % (angle, latest_range))
         num_readings += 1
         ranges.append(latest_range * scale)
@@ -87,9 +87,9 @@ if __name__ == '__main__':
     rospy.init_node("range_to_laser")
     rospy.loginfo("range_to_laser started")
     roslib.load_manifest('knex_ros')
-    scale = rospy.get_param('distance_scale', 1)
-    std_threshold = rospy.get_param('std_threshold', 10)
-    std_timeout = rospy.get_param('std_timeout', 4)
+    scale = rospy.get_param('~distance_scale', 1)
+    std_threshold = rospy.get_param('std_threshold', 5)
+    std_timeout = rospy.get_param('std_timeout', 40)
     rospy.loginfo("range_to_laser scale: %0.2f", scale)
     
     rospy.Subscriber("range_filtered", Float32, rangeCallback)
@@ -104,9 +104,9 @@ if __name__ == '__main__':
     while not rospy.is_shutdown():
         doAScan(0)
         r.sleep()
-        servo_pub.publish( 0 )
+        # servo_pub.publish( 0 )
         rospy.sleep(1)
         
-#        doAScan(1)
-#        r.sleep()
+        doAScan(1)
+        r.sleep()
         

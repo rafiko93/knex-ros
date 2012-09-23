@@ -51,7 +51,7 @@ if __name__ == '__main__':
     """ main"""
     rospy.init_node("range_filter")
     rospy.loginfo("range_filter started")
-    rolling_pts = rospy.get_param('rolling_pts',10)
+    rolling_pts = rospy.get_param('rolling_pts',40)
     global prev
     prev = [0] * rolling_pts
     

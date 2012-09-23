@@ -19,7 +19,7 @@ class MainWindow(QtGui.QMainWindow):
     def __init__(self):
     #####################################################################    
         super(MainWindow, self).__init__()
-        self.timer_rate = rospy.get_param('~publish_rate', 25)
+        self.timer_rate = rospy.get_param('~publish_rate', 50)
         self.pub_twist = rospy.Publisher('twist', Twist)
         
         self.initUI()
@@ -104,10 +104,10 @@ def main():
     global r_min
     global r_max
     
-    x_min = rospy.get_param("~x_min", -40.0)
-    x_max = rospy.get_param("~x_max", 40.0)
-    r_min = rospy.get_param("~r_min", -200.0)
-    r_max = rospy.get_param("~r_max", 200.0)
+    x_min = rospy.get_param("~x_min", -1.0)
+    x_max = rospy.get_param("~x_max", 1.0)
+    r_min = rospy.get_param("~r_min", -10.0)
+    r_max = rospy.get_param("~r_max", 10.0)
     
     app = QtGui.QApplication(sys.argv)
     ex = MainWindow()
