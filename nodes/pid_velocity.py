@@ -97,8 +97,8 @@ if __name__ == '__main__':
             if (target == 0):
                 motor = 0
     
-            # rospy.loginfo("vel:%0.2f tar:%0.2f err:%0.2f int:%0.2f der:%0.2f ## motor:%d " % 
-            #              (vel, target, error, integral, derivative, motor))
+            rospy.loginfo("vel:%0.2f tar:%0.2f err:%0.2f int:%0.2f der:%0.2f ## motor:%d " % 
+                          (vel, target, error, integral, derivative, motor))
     
     
             pub_motor.publish(motor)

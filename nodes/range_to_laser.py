@@ -8,6 +8,7 @@
 
 import rospy
 import roslib
+from numpy import array
 
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Int16
@@ -29,7 +30,8 @@ def stdCallback(msg):
 ########################################################
 def doAScan(direction):
 ########################################################
-    scan_rate = 20   # hertz between steps
+    scan_rate = 50   # hertz between steps
+    angle_slack = 0.25
    
     if direction:
         angle_start = 180
@@ -51,27 +53,39 @@ def doAScan(direction):
         servo_pub.publish( angle )
         wait_start = rospy.Time.now()
         r.sleep()
-        while latest_std > std_threshold:
-            if rospy.Time.now() - wait_start > rospy.Duration(std_timeout):
-                rospy.loginfo("-W- range_to_laser timed out waiting for std_dev (%0.2f) to get below threshold (%0.2f)" % (latest_std, std_threshold) )
-                break
+#        while latest_std > std_threshold:
+#            if rospy.Time.now() - wait_start > rospy.Duration(std_timeout):
+#                rospy.loginfo("-W- range_to_laser timed out waiting for std_dev (%0.2f) to get below threshold (%0.2f)" % (latest_std, std_threshold) )
+#                break
         # rospy.loginfo("angle %d range:%0.2f" % (angle, latest_range))
         num_readings += 1
-        ranges.append(latest_range * scale)
-        if latest_range > 0:
-            scan.intensities.append(1/latest_range)
+        ranges_ary = array(ranges[-4:])
+        if ranges_ary.std() < 0.04: 
+            scan.intensities.append(100)
+            ranges.append(latest_range * scale)
         else:
+            ranges.append(1e4)
             scan.intensities.append(0)
+            
+#        if latest_range > 0:
+#            scan.intensities.append( 1 / ( ranges_ary.std() * 10 + .1 ) )
+#        if latest_range > 0:
+#            scan.intensities.append(1/latest_range)
+#        else:
+#            scan.intensities.append(0)
+    scan.angle_min = -1.57
+    scan.angle_max = 1.57
     
     if not direction:
         ranges.reverse()    
         scan.intensities.reverse()
+        scan.angle_min += angle_slack
+        scan.angle_max += angle_slack
+        
     scan.ranges = ranges
     scan.header.stamp = scan_time;
     scan.header.frame_id = 'scanner'
     # TODO: change this to 'laser_frame'.  (create the transform first)
-    scan.angle_min = -1.57
-    scan.angle_max = 1.57
     scan.angle_increment = 3.14 / num_readings
     scan.time_increment = (1 / scan_rate)
     scan.range_min = 0.01 * scale

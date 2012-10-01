@@ -4,14 +4,15 @@
  <rosparam param="ticks_meter">62</rosparam>
  <rosparam param="base_width">0.245</rosparam>
  <rosparam param="distance_scale">1</rosparam>
- <rosparam param="rolling_pts">10</rosparam>
  <param name="robot_description" textfile="$(find knex_ros)/knex.urdf" />
  
  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
 
   <node pkg="knex_ros" type="knex_arduino_connector.py" name="knex_arduino_connector" output="screen"/>
   <node pkg="knex_ros" type="diff_tf.py" name="diff_tf" output="screen"/>
-  <node pkg="knex_ros" type="range_filter.py" name="range_filter" output="screen"/>
+  <node pkg="differential_drive" type="range_filter.py" name="range_filter" output="screen">
+     <rosparam param="rolling_pts">10</rosparam>
+  </node>
   <node pkg="knex_ros" type="range_to_laser.py" name="range_to_laser" output="screen"/> 
   <node pkg="knex_ros" type="wheel_scaler.py" name="wheel_scaler" output="screen"/>
   <node pkg="knex_ros" type="pid_velocity.py" name="lpid_velocity" output="screen">
@@ -42,19 +43,19 @@
   
   <node pkg="gmapping" type="slam_gmapping" name="gmapping" output="screen">
     <remap from="scan" to="/laser"/>
-    
-    <rosparam param="linearUpdate">0.04</rosparam>
     <rosparam param="odom_frame">odom</rosparam>
-    <rosparam param="kernelSize">0.5</rosparam>
-    <rosparam param="delta">0.01</rosparam>
+    <rosparam param="linearUpdate">0.04</rosparam> <!-- Process a scan each time the robot translates this far -->
+    <rosparam param="angularUpdate">0.1</rosparam> <!-- Process a scan each time the robot rotates this far -->
+    <rosparam param="kernelSize">0.5</rosparam>    <!-- The kernel in which to look for a correspondence -->
+    <rosparam param="delta">0.05</rosparam>        <!-- resolution of the map -->
     <rosparam param="lstep">0.005</rosparam>
     <rosparam param="astep">0.05</rosparam>
     <rosparam param="iterations">10</rosparam>
+    <rosparam param="lsigma">1.5</rosparam> <!-- The sigma of a beam used for likelihood -->
     <rosparam param="xmin">-10.0</rosparam>
     <rosparam param="xmax">10.0</rosparam>
     <rosparam param="ymin">-10.0</rosparam>
     <rosparam param="ymax">10.0</rosparam>
-    <rosparam param="angularUpdate">0.2</rosparam>  
     <rosparam param="llsamplerange">0.01</rosparam>
     <rosparam param="llsamplestep">0.01</rosparam>
     <rosparam param="maxRange">1.0</rosparam>
