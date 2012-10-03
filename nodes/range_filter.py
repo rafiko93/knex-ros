@@ -47,12 +47,34 @@ class RangeFilter():
         self.rolling_pts = rospy.get_param('~rolling_pts',4)
         self.m = rospy.get_param('~exponent', -1.31)
         self.b = rospy.get_param('~coefficient', 266.0)
+        self.max_valid = rospy.get_param("~max_valid", 900.0)
+        self.min_valid = rospy.get_param("~min_valid", 1.0)
+        
+        # check for valid parameters
+        # zero cannot be raised to a negative power
+        if self.min_valid == 0 and self.m < 0:
+            rospy.logerr("-E- range_filter: cannot have a min_valid of 0 with a negative exponent.  Forcing min_valid to 1e-10")
+            min_valid = 1e-10
+        
+        # negative number cannot be raised to a fractional power.
+        if self.min_valid < 0 and round(self.m) != self.m:
+            rospy.logerr("-E- range_filter: cannot have a negative min_valid with a fractional exponent. Forcing min_valid to 0")
+            self.min_valid = 0
+            
+        if self.max_valid < self.min_valid:
+            rospy.logfatal("-E- range_filter: max_valid (%0.3f) cannot be less than min_vaid (%0.3f)" % (self.max_valid, self.min_valid)) 
+            return(-1)
+            
         self.prev = [0] * self.rolling_pts
     
         rospy.Subscriber("range", Int16, self.inputCallback)
     
         self.filtered_pub = rospy.Publisher("range_filtered", Float32)
         self.std_pub = rospy.Publisher("range_std", Float32)
+        
+    #########################################################################
+    def spin(self):
+    #########################################################################
         while not rospy.is_shutdown():
             rospy.spin()
     
@@ -63,7 +85,7 @@ class RangeFilter():
         rospy.loginfo("-D- range_filter inputCallback")
         cur_val = msg.data
     
-        if cur_val < 900:
+        if cur_val <= self.max_valid and cur_val >= self.min_valid:
             self.prev.append(cur_val)
             del self.prev[0]
         
@@ -71,9 +93,9 @@ class RangeFilter():
             self.rolling_ave = p.mean()
             self.rolling_std = p.std()
         
-            rolling_meters = self.b * self.rolling_ave ** self.m
+            self.rolling_meters = self.b * self.rolling_ave ** self.m
         
-            self.filtered_pub.publish( rolling_meters )
+            self.filtered_pub.publish( self.rolling_meters )
             self.std_pub.publish( self.rolling_std )
         
     
@@ -84,4 +106,5 @@ if __name__ == '__main__':
 ############################################################################## 
     """ main"""
     rangeFilter = RangeFilter()
+    rangeFilter.spin()
     
