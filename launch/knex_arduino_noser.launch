@@ -9,13 +9,13 @@
  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
 
   <node pkg="knex_ros" type="knex_arduino_connector.py" name="knex_arduino_connector" output="screen"/>
-  <node pkg="knex_ros" type="diff_tf.py" name="diff_tf" output="screen"/>
-  <node pkg="differential_drive" type="range_filter.py" name="range_filter" output="screen">
+  <node pkg="differential_drive" type="diff_tf.py" name="diff_tf" output="screen"/>
+  <node pkg="knex_ros" type="range_filter.py" name="range_filter" output="screen">
      <rosparam param="rolling_pts">10</rosparam>
   </node>
   <node pkg="knex_ros" type="range_to_laser.py" name="range_to_laser" output="screen"/> 
-  <node pkg="knex_ros" type="wheel_scaler.py" name="wheel_scaler" output="screen"/>
-  <node pkg="knex_ros" type="pid_velocity.py" name="lpid_velocity" output="screen">
+  <node pkg="differential_drive" type="wheel_scaler.py" name="wheel_scaler" output="screen"/>
+  <node pkg="differential_drive" type="pid_velocity.py" name="lpid_velocity" output="screen">
       <rosparam param="Kp">150</rosparam>
       <rosparam param="Ki">150</rosparam>
       <rosparam param="Kd">.000002</rosparam>
@@ -27,7 +27,7 @@
       <remap from="motor_cmd" to="lmotor_cmd"/>
       <remap from="wheel_vtarget" to="lwheel_vtarget"/>
   </node> 
-  <node pkg="knex_ros" type="pid_velocity.py" name="rpid_velocity" output="screen">
+  <node pkg="differential_drive" type="pid_velocity.py" name="rpid_velocity" output="screen">
       <rosparam param="Kp">150</rosparam>
       <rosparam param="Ki">150</rosparam>
       <rosparam param="Kd">.000002</rosparam>
@@ -65,8 +65,8 @@
     <rosparam param="stt">0.002</rosparam>
   </node>
   
-  <node pkg="knex_ros" type="virtual_joystick.py" name="virtual_joystick" output="screen"/>
-  <node pkg="knex_ros" type="twist_to_motors.py" name="twist_to_motors" output="screen">
+  <node pkg="differential_drive" type="virtual_joystick.py" name="virtual_joystick" output="screen"/>
+  <node pkg="differential_drive" type="twist_to_motors.py" name="twist_to_motors" output="screen">
     <rosparam param="base_width">0.245</rosparam>
   </node>
   
