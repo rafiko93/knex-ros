@@ -44,11 +44,7 @@ class RangeFilter():
         self.rolling_meters = 0.0
         rospy.init_node("range_filter")
         rospy.loginfo("-I- range_filter started")
-        self.rolling_pts = rospy.get_param('~rolling_pts',4)
-        self.m = rospy.get_param('~exponent', -1.31)
-        self.b = rospy.get_param('~coefficient', 266.0)
-        self.max_valid = rospy.get_param("~max_valid", 900.0)
-        self.min_valid = rospy.get_param("~min_valid", 1.0)
+        self.readParameters()
         
         # check for valid parameters
         # zero cannot be raised to a negative power
@@ -73,6 +69,15 @@ class RangeFilter():
         self.std_pub = rospy.Publisher("range_std", Float32)
         
     #########################################################################
+    def readParameters(self):
+    #########################################################################
+        self.m = rospy.get_param('~exponent', -1.31)
+        self.b = rospy.get_param('~coefficient',  266.0)
+        self.max_valid = rospy.get_param("~max_valid", 900)
+        self.min_valid = rospy.get_param("~min_valid", 1)
+        self.rolling_pts = rospy.get_param('~rolling_pts',4)
+        
+    #########################################################################
     def spin(self):
     #########################################################################
         while not rospy.is_shutdown():
@@ -82,7 +87,7 @@ class RangeFilter():
     #########################################################################
     def inputCallback(self, msg):
     #########################################################################
-        rospy.loginfo("-D- range_filter inputCallback")
+        # rospy.loginfo("-D- range_filter inputCallback")
         cur_val = msg.data
     
         if cur_val <= self.max_valid and cur_val >= self.min_valid:
