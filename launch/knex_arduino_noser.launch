@@ -1,15 +1,14 @@
 <launch>
 <!--  TODO: make these parameters local -->
- <rosparam param="rate">8.0</rosparam>
- <rosparam param="ticks_meter">62</rosparam>
- <rosparam param="base_width">0.245</rosparam>
- <rosparam param="distance_scale">1</rosparam>
  <param name="robot_description" textfile="$(find knex_ros)/knex.urdf" />
  
  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
 
   <node pkg="knex_ros" type="knex_arduino_connector.py" name="knex_arduino_connector" output="screen"/>
-  <node pkg="differential_drive" type="diff_tf.py" name="diff_tf" output="screen"/>
+  <node pkg="differential_drive" type="diff_tf.py" name="diff_tf" output="screen">
+     <rosparam param="rate">8.0</rosparam>
+     <rosparam param="base_width">0.245</rosparam>
+  </node>
   <node pkg="knex_ros" type="range_filter.py" name="range_filter" output="screen">
      <rosparam param="rolling_pts">10</rosparam>
   </node>
