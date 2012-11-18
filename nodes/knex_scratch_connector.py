@@ -1,4 +1,20 @@
 #!/usr/bin/env python
+#   Copyright 2012 Jon Stephan
+#   jfstepha@gmail.com
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from array import array
 import socket
 import time
@@ -9,7 +25,9 @@ import re
 from std_msgs.msg import Int16
 # roslib.load_manifest('knex_ros')
 
+############################################################
 def sendScratchCommand(cmd):
+############################################################
     n = len(cmd)
     a = array('c')
     a.append(chr((n >> 24) & 0xFF))
@@ -17,9 +35,15 @@ def sendScratchCommand(cmd):
     a.append(chr((n >>  8) & 0xFF))
     a.append(chr(n & 0xFF))
     scratchSock.send(a.tostring() + cmd)
-
+    
+############################################################
+def rangeCallback(msg):
+############################################################
+    sendScratchCommand("sensor-update \"range\" %d" % msg.data)
+    
 ############################################################
 if __name__ == '__main__':
+############################################################
     rospy.loginfo("-I- knex_scratch_connector started")
     rospy.init_node('knex_scratch_connector')
     PORT = 42001
@@ -41,7 +65,8 @@ if __name__ == '__main__':
     pub_servo.append(rospy.Publisher("servo8_cmd", Int16))
     pub_servo.append(rospy.Publisher("servo9_cmd", Int16))
     pub_servo.append(rospy.Publisher("servo10_cmd", Int16))
-
+    
+    rospy.Subscriber("range", Int16, rangeCallback)
 
     while True:
         data = scratchSock.recv(1024)

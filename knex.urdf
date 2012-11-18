@@ -3,9 +3,9 @@
   <link name="base_link">
     <visual>
       <geometry>
-        <box size="0.22 0.158 0.08"/>
+        <box size="0.16 0.16 0.12"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0.079 0 0.085"/>
+      <origin rpy="0 0 0" xyz="0 0 0.085"/>
       <material name="white">
         <color rgba="1 1 1 1"/>
       </material>
@@ -53,7 +53,7 @@
       <geometry>
         <cylinder length="0.060" radius="0.023"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0.235 0 0.08"/>
+      <origin rpy="0 0 0" xyz="0.13 0 0.08"/>
       <material name="white">
         <color rgba="1 1 1 1"/>
       </material>
@@ -81,7 +81,7 @@
   <joint name="base_to_fwheel" type="fixed">
     <parent link="base_link"/>
     <child link="fwheel"/>
-    <origin xyz="0.235 0 0.02" rpy="0 0 0"/>
+    <origin xyz="0.13 0 0.02" rpy="0 0 0"/>
   </joint>
   
   <link name="scanner">
@@ -99,7 +99,7 @@
   <joint name="base_to_scanner" type="fixed">
     <parent link="base_link"/>
     <child link="scanner"/>
-    <origin xyz="0.155 0 0.155" rpy="0 0 0"/>
+    <origin xyz="0.105 0 0.22" rpy="0 0 0"/>
 
   
 </robot>

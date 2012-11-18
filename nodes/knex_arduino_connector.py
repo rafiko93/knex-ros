@@ -307,7 +307,7 @@ def launch_window():
         
     app = wx.App(False)  # Create a new app, don't redirect stdout/stderr to a window.
     frame = MainWindow(None, "Kinex arduino connector") # A Frame is a top-level window.
-    frame.Show(True)     # Show the frame.
+    frame.Show(True)     # Show the frame. 
     app.MainLoop()
         
         
